@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Django
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+media/
+staticfiles/
+static/
+*.orig
+*.swp
+
+# Virtual Environment
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Python Egg
+*.egg
+*.egg-info/
+
+# Miscellaneous
+*.coverage
+.coverage.*
+*.hypothesis/
+.coverage
+nosetests.xml
+coverage.xml
+*.cover
+*.log

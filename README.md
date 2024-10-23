@@ -61,9 +61,12 @@ pip install -r requirements.txt
 Create a file named `.env` in the root of your project and populate it with the following sample content. Make sure to replace the placeholder values with your actual project details:
 
 ```makefile
-DEBUG=True
-SECRET_KEY=your_secret_key
-DATABASE_URL=mysql://user:password@localhost:3306/dbname
+DATABASE_ENGINE=""
+DATABASE_NAME=""
+DATABASE_USER=""
+DATABASE_PASSWORD=""
+DATABASE_HOST=""
+DATABASE_PORT=""
 ```
 
 ### Step 5: Apply Migrations

@@ -97,4 +97,4 @@ Open your web browser and go to `http://127.0.0.1:8000` to access the applicatio
 
 ## API Documentation
 
-You can find the API documentation at `http://127.0.0.1:8000/docs/`.
+You can find the API documentation at `http://127.0.0.1:8000/swagger/`.

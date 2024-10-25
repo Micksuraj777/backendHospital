@@ -37,3 +37,46 @@ CREATE TABLE doctor (
   phone_no VARCHAR(15),
   status VARCHAR(15)
 );
+
+DELIMITER $$
+
+CREATE PROCEDURE ManagePatient(
+    IN action_type VARCHAR(10),
+    IN p_patient_id INT,
+    IN p_name VARCHAR(50),
+    IN p_phone_no VARCHAR(10),
+    IN p_address VARCHAR(100),
+    IN p_blood_group CHAR(3),
+    IN p_gender VARCHAR(20),
+    IN p_room VARCHAR(30),
+    IN p_status VARCHAR(15),
+    IN p_refer_doc VARCHAR(20),
+    IN p_date_of_birth DATE,
+    IN p_age INT
+)
+BEGIN
+    IF action_type = 'ADD' THEN
+        INSERT INTO patient (name, phone_no, address, blood_group, gender, room, status, refer_doc, date_of_birth, age)
+        VALUES (p_name, p_phone_no, p_address, p_blood_group, p_gender, p_room, p_status, p_refer_doc, p_date_of_birth, p_age);
+    
+    ELSEIF action_type = 'UPDATE' THEN
+        UPDATE patient
+        SET name = p_name,
+            phone_no = p_phone_no,
+            address = p_address,
+            blood_group = p_blood_group,
+            gender = p_gender,
+            room = p_room,
+            status = p_status,
+            refer_doc = p_refer_doc,
+            date_of_birth = p_date_of_birth,
+            age = p_age
+        WHERE patient_id = p_patient_id;
+
+    ELSEIF action_type = 'DELETE' THEN
+        DELETE FROM patient WHERE patient_id = p_patient_id;
+    
+    END IF;
+END $$
+
+DELIMITER ;

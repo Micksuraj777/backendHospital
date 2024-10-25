@@ -84,6 +84,10 @@ class PatientAPI(APIView):
                 data["age"],
             ],
         )
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        patient_id = cursor.fetchone()[0]
+        insert_query = f"UPDATE room SET patient_id = %s,  status = %s WHERE room_no = %s"
+        cursor.execute(insert_query, [patient_id, "Occupied",data["room"]])
         return Response(
             {"message": "Patient created successfully"}, status=status.HTTP_201_CREATED
         )
@@ -92,7 +96,6 @@ class PatientAPI(APIView):
     def patch(self, request, patient_id):
         data = request.data
         cursor = connection.cursor()
-
         # Constructing dynamic SQL query based on fields provided in the request
         fields = []
         values = []
@@ -126,11 +129,13 @@ class PatientAPI(APIView):
         if "age" in data:
             fields.append("age = %s")
             values.append(data["age"])
-
         if fields:
             values.append(patient_id)
             query = f"UPDATE patient SET {', '.join(fields)} WHERE patient_id = %s"
             cursor.execute(query, values)
+            if data["status"] == 'Discharge':
+                insert_query = f"UPDATE room SET patient_id = NULL,  status = %s WHERE room_no = %s"
+                cursor.execute(insert_query, ["Vacant",data["room"]])
             return Response(
                 {"message": "Patient updated successfully"}, status=status.HTTP_200_OK
             )

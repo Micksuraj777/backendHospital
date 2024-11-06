@@ -6,11 +6,9 @@ from rest_framework import status
 from django.db import connection
 from django.http import JsonResponse
 
-
 class HomeAPI(APIView):
     def get(self, request):
         return HttpResponse("Server is alive")
-
 
 class PatientAPI(APIView):
     # GET method to fetch all patients or a specific patient by ID
@@ -144,7 +142,6 @@ class PatientAPI(APIView):
                 {"error": "No fields to update"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-
 class MedicineAPI(APIView):
     # GET method to fetch all medicines or a specific medicine by medicine ID
     def get(self, request, medicine_id=None):
@@ -185,7 +182,6 @@ class MedicineAPI(APIView):
                 )
             return JsonResponse(data, safe=False)
 
-
 class DoctorAPI(APIView):
     # GET method to fetch all doctors or a specific doctor by doctor ID
     def get(self, request, doctor_id=None):
@@ -221,7 +217,6 @@ class DoctorAPI(APIView):
                     }
                 )
             return JsonResponse(data, safe=False)
-
 
 class RoomAPI(APIView):
     # GET method to fetch all rooms or a specific room by room number

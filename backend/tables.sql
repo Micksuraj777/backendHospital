@@ -80,3 +80,34 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE ManageDoctor(
+    IN action_type VARCHAR(10),
+    IN p_doctor_id INT,
+    IN p_name VARCHAR(30),
+    IN p_department VARCHAR(20),
+    IN p_phone_no VARCHAR(15),
+    IN p_status VARCHAR(15)
+)
+BEGIN
+    IF action_type = 'ADD' THEN
+        INSERT INTO doctor (doctor_id, name, department, phone_no, status)
+        VALUES (p_doctor_id, p_name, p_department, p_phone_no, p_status);
+
+    ELSEIF action_type = 'UPDATE' THEN
+        UPDATE doctor
+        SET name = p_name,
+            department = p_department,
+            phone_no = p_phone_no,
+            status = p_status
+        WHERE doctor_id = p_doctor_id;
+
+    ELSEIF action_type = 'DELETE' THEN
+        DELETE FROM doctor WHERE doctor_id = p_doctor_id;
+
+    END IF;
+END $$
+
+DELIMITER ;

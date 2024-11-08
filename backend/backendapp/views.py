@@ -205,18 +205,60 @@ class DoctorAPI(APIView):
         else:
             cursor.execute("SELECT * FROM doctor")
             doctors = cursor.fetchall()
-            data = []
-            for doctor in doctors:
-                data.append(
-                    {
-                        "doctor_id": doctor[0],
-                        "name": doctor[1],
-                        "department": doctor[2],
-                        "phone_no": doctor[3],
-                        "status": doctor[4],
-                    }
-                )
+            data = [
+                {
+                    "doctor_id": doctor[0],
+                    "name": doctor[1],
+                    "department": doctor[2],
+                    "phone_no": doctor[3],
+                    "status": doctor[4],
+                }
+                for doctor in doctors
+            ]
             return JsonResponse(data, safe=False)
+
+    # POST method to create a new doctor with dynamic fields
+    def post(self, request):
+        data = request.data
+        cursor = connection.cursor()
+
+        # Dynamically constructing fields and values for the insert query
+        fields = []
+        placeholders = []
+        values = []
+
+        if "doctor_id" in data:
+            fields.append("doctor_id")
+            placeholders.append("%s")
+            values.append(data["doctor_id"])
+        if "name" in data:
+            fields.append("name")
+            placeholders.append("%s")
+            values.append(data["name"])
+        if "department" in data:
+            fields.append("department")
+            placeholders.append("%s")
+            values.append(data["department"])
+        if "phone_no" in data:
+            fields.append("phone_no")
+            placeholders.append("%s")
+            values.append(data["phone_no"])
+        if "status" in data:
+            fields.append("status")
+            placeholders.append("%s")
+            values.append(data["status"])
+
+        if fields:
+            query = f"INSERT INTO doctor ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
+            cursor.execute(query, values)
+            return Response(
+                {"message": "Doctor created successfully"}, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {"error": "No fields to insert"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 class RoomAPI(APIView):
     # GET method to fetch all rooms or a specific room by room number
@@ -251,3 +293,61 @@ class RoomAPI(APIView):
                     }
                 )
             return JsonResponse(data, safe=False)
+
+class AppointmentAPI(APIView):
+    # GET method to fetch all appointments or a specific appointment by ID
+    def get(self, request, appointment_id=None):
+        cursor = connection.cursor()
+        if appointment_id:
+            cursor.execute("SELECT * FROM appointment WHERE appointment_id = %s", [appointment_id])
+            appointment = cursor.fetchone()
+            if appointment:
+                data = {
+                    "appointment_id": appointment[0],
+                    "patient_id": appointment[1],
+                    "doctor_id": appointment[2],
+                    "token": appointment[3],
+                    "date": appointment[4],
+                }
+                return JsonResponse(data)
+            else:
+                return Response(
+                    {"error": "Appointment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            cursor.execute("SELECT * FROM appointment")
+            appointments = cursor.fetchall()
+            data = [
+                {
+                    "appointment_id": appointment[0],
+                    "patient_id": appointment[1],
+                    "doctor_id": appointment[2],
+                    "token": appointment[3],
+                    "date": appointment[4],
+                }
+                for appointment in appointments
+            ]
+            return JsonResponse(data, safe=False)
+
+    # POST method to create a new appointment
+    def post(self, request):
+        data = request.data
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            INSERT INTO appointment (patient_id, doctor_id, token, date)
+            VALUES (%s, %s, %s, %s)
+            """,
+            [
+                data["patient_id"],
+                data["doctor_id"],
+                data["token"],
+                data["date"],
+            ],
+        )
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        appointment_id = cursor.fetchone()[0]
+        return Response(
+            {"message": "Appointment created successfully", "appointment_id": appointment_id},
+            status=status.HTTP_201_CREATED
+        )
